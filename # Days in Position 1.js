@@ -59,6 +59,9 @@ if(!rsm1.EOF)
 }
 
 var d21 = new Date(cutoff1);
+// MJR CHANGES 6-21-17 -- Add one day to end date, customer wants End Date to be 12/31/17 and difference to still calculate to 365
+d21.setDate(d21.getDate() + 1);
+// END CHANGES
 
 ly.log("cutoff1: " +cutoff1);
 ly.log("D21: " +d21);
@@ -85,7 +88,15 @@ end = cutoff1;
 }
 
 var Ad1 = new Date(start);
-var Ad2 = new Date(end);
+// MJR CHANGES 6-21-17 -- use d21 if FY End Date is the maximum
+if(d11 > d21){
+	var Ad2 = new Date(end);
+}
+else
+{
+	var Ad2 = d21;
+}
+// END CHANGES
 
 var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
 
