@@ -84,6 +84,11 @@ strSQL= "select o.Code as hierarchylvl4 from organization o inner join organizat
 	 strREGION2=rsOrgs3("custom35txt");
  }
  
+ //handle null values
+ if (strSTI_TARG_PERCENT2 == ''){
+ 	strSTI_TARG_PERCENT2 = 0;
+ }
+
  //Update Slot 3 with Slot 2 data:
   	 var UpdateSQL2="update personoptional1 set Decimal4='"+strSTI_TARG_PERCENT2+"' where personfk="+personpk;
 	  var qry2to3 = ly.CreateQuery(UpdateSQL2);
@@ -119,6 +124,11 @@ strSQL= "select o.Code as hierarchylvl4 from organization o inner join organizat
 	  strSUBBUSINESS_UNIT1 =rsOrgs4("custom40txt");
 	  strREGION1 =rsOrgs4("custom34txt");
 	}
+
+	 //handle null values
+	 if (strSTI_TARG_PERCENT1 == ''){
+	 	strSTI_TARG_PERCENT1 = 0;
+	 }
 	
 	//Update Slot 2 with Slot 1 data:
 	var UpdateSQL3="update personoptional1 set Date5='"+strSTI_ELIG_DATE1+"', Decimal3='"+strSTI_TARG_PERCENT1+"' where personfk="+personpk;
@@ -147,6 +157,12 @@ strSQL= "select o.Code as hierarchylvl4 from organization o inner join organizat
 	   strREGION =rsOrgs5("regioncd");
 	 
 	}
+
+	 //handle null values
+	 if (strSTI_TARG_PERCENT == ''){
+	 	strSTI_TARG_PERCENT = 0;
+	 }
+
 	//Update Slot 1 with Stage Slot data:
      	 
 	 var UpdateSQL4="update personoptional1 set Date4='"+strSTI_ELIG_DATE+"', Decimal2='"+strSTI_TARG_PERCENT+"' where personfk="+personpk;
