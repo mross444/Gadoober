@@ -32,7 +32,6 @@ int main(int argc, char* argv[]){
 	addDynArr(dyn, 5);
 	addDynArr(dyn, 6);
 	
-	
 	printf("The array's content: [3,4,10,5,6]\n");
 	assertTrue(EQ(getDynArr(dyn, 0), 3), "Test 1st element == 3");
 	assertTrue(EQ(getDynArr(dyn, 1), 4), "Test 2nd element == 4");
@@ -85,10 +84,6 @@ int main(int argc, char* argv[]){
 	printf("Removing 3...\nThe stack's content: [6,5,9]\n");
 	assertTrue(!containsDynArr(dyn, 3), "Test not containing 3");
 	
-	
-
-    deleteDynArr(dyn); 
-
-
+     deleteDynArr(dyn); 
 	return 0;
 }
