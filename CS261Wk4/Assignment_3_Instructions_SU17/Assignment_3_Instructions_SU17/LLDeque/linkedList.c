@@ -1,3 +1,13 @@
+/*********************************************************************
+** Program Filename: linkedList.c
+** Author:  Michael Ross
+** Date:  7/23/17
+** Description: Function definitions for the doube linked list data 
+		structure.
+** Input:  none
+** Output:  console
+*********************************************************************/
+
 #include "linkedList.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -31,14 +41,14 @@ static void init(struct LinkedList* list) {
 	/* allocate memory for frontSentinel*/
 	list->frontSentinel = malloc(sizeof(struct Link));
 
-	/* assert memory was allocated */
+	/* validate memory was allocated */
 	assert(list->frontSentinel != 0);
 
 	/* allocate memory for backSentinel */
 	list->backSentinel = malloc(sizeof(struct Link));
 
-	/* assert memory was allocated */
-	assert(list->backSentinel);
+	/* validate memory was allocated */
+	assert(list->backSentinel != 0);
 
 	/* frontSentinel's "next" is backSentinel */
 	list->frontSentinel->next = list->backSentinel;
@@ -109,12 +119,12 @@ static void removeLink(struct LinkedList* list, struct Link* link)
 	/* Check that the link is valid */
 	assert(link != 0);
 
-	/* For element to be removed, updated its previous element's
+	/* For element to be removed, update its previous element's
 	next pointer to point to the element after the one to be
 	removed */
 	link->prev->next = link->next;
 
-	/* For element to be removed, updated its next element's
+	/* For element to be removed, update its next element's
 	prev pointer to point to the element before the one to be
 	removed */
 	link->next->prev = link->prev;
@@ -160,7 +170,7 @@ void linkedListAddFront(struct LinkedList* list, TYPE value)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* make update */
@@ -174,9 +184,9 @@ void linkedListAddFront(struct LinkedList* list, TYPE value)
  */
 void linkedListAddBack(struct LinkedList* list, TYPE value)
 {
-	/* BEGIN UPDATES 
-	*/
-	/* validate list */
+	/* BEGIN UPDATES */
+
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* make update */
@@ -192,7 +202,7 @@ TYPE linkedListFront(struct LinkedList* list)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* get and return the requested value */
@@ -208,7 +218,7 @@ TYPE linkedListBack(struct LinkedList* list)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* get and return the requested value */
@@ -224,7 +234,7 @@ void linkedListRemoveFront(struct LinkedList* list)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* validate list is not empty */
@@ -243,7 +253,7 @@ void linkedListRemoveBack(struct LinkedList* list)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* validate list is not empty */
@@ -262,7 +272,7 @@ int linkedListIsEmpty(struct LinkedList* list)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	if (list->size == 0) {
@@ -281,7 +291,7 @@ void linkedListPrint(struct LinkedList* list)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list is not null */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	printf("\n\nPrinting list values...\n");
@@ -307,7 +317,7 @@ void linkedListAdd(struct LinkedList* list, TYPE value)
 {
 	/* BEGIN UPDATES */
 
-	/* validate list is not null */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	linkedListAddFront(list, value);
@@ -322,7 +332,7 @@ int linkedListContains(struct LinkedList* list, TYPE value)
 {
 	/* BEGIN UPDATES */
 
-	/* check list is valid */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* define chkLnk pointer, start at value after frontSentinel */
@@ -353,7 +363,7 @@ void linkedListRemove(struct LinkedList* list, TYPE value)
 {
 	/* BEGIN UPDATES */
 
-	/* check list is valid */
+	/* validate list has been initialized */
 	assert(list != 0);
 
 	/* define chkLnk pointer, start at value after frontSentinel */

@@ -1,3 +1,13 @@
+/*********************************************************************
+** Program Filename: circularList.c
+** Author:  Michael Ross
+** Date:  7/23/17
+** Description: Function definitions for the circular linked list
+		data structure.
+** Input:  none
+** Output:  console
+*********************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -80,9 +90,6 @@ static void addLinkAfter(struct CircularList* list, struct Link* link, TYPE valu
 	/* call createLink to initialize the new link */
 	struct Link * newLink = createLink(value);
 
-	/* validate memory was allocated */
-	assert(newLink != 0);
-
 	/* newLink's next is the current prev for link */
 	newLink->next= link->next;
 
@@ -116,12 +123,12 @@ static void removeLink(struct CircularList* list, struct Link* link)
 	/* Check that the link is valid */
 	assert(link != 0);
 
-	/* For element to be removed, updated its previous element's
+	/* For element to be removed, update its previous element's
 	next pointer to point to the element after the one to be
 	removed */
 	link->prev->next = link->next;
 
-	/* For element to be removed, updated its next element's
+	/* For element to be removed, update its next element's
 	prev pointer to point to the element before the one to be
 	removed */
 	link->next->prev = link->prev;
@@ -220,7 +227,7 @@ TYPE circularListBack(struct CircularList* list)
 	/* validate list is not pointing to NULL */
 	assert(list != 0);
 
-	/* get the value at the front of the deque */
+	/* get the value at the back of the deque */
 	return list->sentinel->prev->value;
 
 	/* END UPDATES */

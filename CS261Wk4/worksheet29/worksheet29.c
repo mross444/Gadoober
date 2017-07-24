@@ -11,10 +11,22 @@ void initBST(struct BinarySearchTree * tree) {
 }
 
 /**********************************************************************
+						    createBST
+**********************************************************************/
+struct BinarySearchTree * createBST() {
+	struct BinarySearchTree * newTree = malloc(sizeof(struct BinarySearchTree));
+	initBST(newTree);
+	return newTree;
+}
+
+/**********************************************************************
 							 addBST
 **********************************************************************/
 void addBST(struct BinarySearchTree * tree, TYPE newValue) {
-	tree->root = _nodeAddBST(tree->root, newValue);  
+	
+	assert(tree != 0);
+
+	tree->root = _nodeAddBST(tree->root, newValue);
 	tree->size++;
 }
 
@@ -22,6 +34,9 @@ void addBST(struct BinarySearchTree * tree, TYPE newValue) {
 							 sizeBST
 **********************************************************************/
 int sizeBST(struct BinarySearchTree *tree) { 
+	
+	assert(tree != 0);
+	
 	return tree->size; 
 }
 
@@ -40,11 +55,11 @@ struct Node * _nodeAddBST(struct Node * current, TYPE newValue) {
 	}
 
 	// Otherwise, if newValue is less than the value at start
-	else if (newValue < current->value) {
+	else if (LT(newValue,current->value)) {
 		current->left = _nodeAddBST(current->left, newValue);		// set the left child to be the value returned by add(leftChild, newValue)
 	}
 
-	// Otherwise
+	// Otherwise (newValue is greater than the value at the start)
 	else {
 		current->right = _nodeAddBST(current->right, newValue);		// set the right child to be add(rightChild, newValue)
 	}
@@ -58,17 +73,24 @@ struct Node * _nodeAddBST(struct Node * current, TYPE newValue) {
 **********************************************************************/
 int containsBST(struct BinarySearchTree * tree, TYPE d) {
 
+	assert(tree != 0);
+
 	return _containsNode(tree->root, d);
 
 }
 
 /**********************************************************************
-						   containsNode
+						  _containsNode
 **********************************************************************/
 int _containsNode(struct Node * current, TYPE d) {
+	
+
+	//if we are at a null node, return false
 	if (current == 0) {
 		return 0;
 	}
+
+	
 
 	// Return true if there is a match
 	else if (current->value == d) {
@@ -76,13 +98,12 @@ int _containsNode(struct Node * current, TYPE d) {
 	}
 
 	// Otherwise, if the chkValue is less than the value of the node,
-	// go left down the tree
-	else if (d < current->value) {
-
+	// go left down the tree (recursive function call)
+	else if (LT(d,current->value)) {
 		return _containsNode(current->left, d);
 	}
 
-	// Otherwise, go right down the tree
+	// Otherwise, go right down the tree (recursive function call)
 	else {
 		return _containsNode(current->right, d);
 	}
@@ -92,10 +113,14 @@ int _containsNode(struct Node * current, TYPE d) {
 							removeBST
 **********************************************************************/
 void removeBST(struct BinarySearchTree *tree, TYPE d) {
+	
+	assert(tree != 0);
+ 
 	if (containsBST(tree, d)) {
 		tree->root = _nodeRemoveBST(tree->root, d);
 		tree->size--;
 	}
+
 }
 
 /**********************************************************************
@@ -103,12 +128,14 @@ void removeBST(struct BinarySearchTree *tree, TYPE d) {
 **********************************************************************/
 TYPE _leftMostChild(struct Node * current) {
 
-	assert(current != 0);
-
+	// If the left child of the node we are at is null, we are at the
+	// node whose value we need to return
 	if (current->left == 0) {
 		return current->value;
 	}
 
+	// Otherwise, we move left down the tree and call the function 
+	// again (recursive function call)
 	else {
 		return _leftMostChild(current->left);
 	}
@@ -119,23 +146,40 @@ TYPE _leftMostChild(struct Node * current) {
 **********************************************************************/
 struct Node * _removeLeftMostChild(struct Node *current) {
 	
+	// If the node we are at has no left child, we are at the node we 
+	// need to remove.
 	if (current->left == 0) {
-		free(current);
-		current = 0;
+		
+		if (current->right != 0) {
+			struct Node * tmpNodePtr = current->right;	// Delete the current node
+			free(current);
+			current = 0;
+			return tmpNodePtr;		// return the right child as the new tree
+		}
+		
+		else {
+			free(current);		// Delete the current node
+			current = 0;		// Set the pointer to null
+		}
 	}
 
+	// Otherwise (left child exists), we move down to the left and call
+	// the function again (recursive function call).
 	else {
-		_removeLeftMostChild(current->left);
+		current->left = _removeLeftMostChild(current->left);
 	}
 
+	
+
+	// Once finished, we return the current node.
 	return current;
 }
 
 
-
-
 /**********************************************************************
 						_nodeRemoveBST
+	NOTE: value MUST exist in the BinarySearchTree.  Function should
+	only be called by removeBST.
 **********************************************************************/
 struct Node *  _nodeRemoveBST(struct Node * current, TYPE d) {
 
@@ -150,11 +194,18 @@ struct Node *  _nodeRemoveBST(struct Node * current, TYPE d) {
 
 		// If only right child is null
 		else if (current->right == 0) {
-
 			struct Node * tmpNodePtr = current->left;	// Delete the current node
 			free(current);
 			current = 0;
 			return tmpNodePtr;		// return the left child as the new tree
+		}
+
+		// If only left child is null
+		else if (current->left == 0) {
+			struct Node * tmpNodePtr = current->right;	// Delete the current node
+			free(current);
+			current = 0;
+			return tmpNodePtr;		// return the right child as the new tree
 		}
 
 		// Otherwise
@@ -168,22 +219,22 @@ struct Node *  _nodeRemoveBST(struct Node * current, TYPE d) {
 		}
 	}
 
-	// Otherwise if testValue is smaller thean start value
-	else if (d < current->value) {
+	// Otherwise if value we're looking for is less than the current node's value
+	else if (LT(d,current->value)) {
 
-		//set left child to remove(leftChild, testValue)
+		// call _nodeRemoveBST on the left node (recursive call)
 		current->left = _nodeRemoveBST(current->left, d);
 	}
 
-	// Otherwise
+	// Otherwise (value we're looking for is greater than the current node's value)
 	else {
 
-		//set right child to remove(rightChild, testValue)
+		//call _nodeRemoveBST on the right node (recursive call)
 		current->right = _nodeRemoveBST(current->right, d);
 
 	}
 
-	// return the current node
+	// once updates are done, return the current node
 	return current;
 
 }
@@ -206,4 +257,85 @@ void _destroyBST(struct Node * current) {
 		_destroyBST(current->right);
 		free(current);
 	}
+}
+
+/**********************************************************************
+						  getFirst
+**********************************************************************/
+TYPE getFirst(struct BinarySearchTree * tree) {
+	
+	assert(tree != 0);
+	assert(tree->root != 0);
+	
+	return _leftMostChild(tree->root);
+}
+
+/**********************************************************************
+						 removeFirst
+**********************************************************************/
+void removeFirst(struct BinarySearchTree * tree) {
+
+	assert(tree != 0);
+	assert(tree->root != 0);
+
+	tree->root = _removeLeftMostChild(tree->root);
+	tree->size--;
+}
+
+
+/*****************************************************************
+			 createPQ - Returns a new PriorityQueue struct
+*****************************************************************/
+struct PriorityQueue * createPQ() { 
+	struct PriorityQueue * newPQ = malloc(sizeof(struct PriorityQueue));
+	initPQ(newPQ);
+	return newPQ;
+}
+
+/*****************************************************************
+		    initPQ - initializes the PriorityQueue
+*****************************************************************/
+void initPQ(struct PriorityQueue* pq) {
+	pq->data = createBST();
+}
+
+/*****************************************************************
+			addPQ -  Adds a value to the PriorityQueue
+*****************************************************************/
+void addPQ(struct PriorityQueue* pq, TYPE d) {
+	addBST(pq->data, d);
+}
+
+/*****************************************************************
+	frontPQ -  return the value at the front of the PQ 
+	(based on priority, not on position in the struct)
+*****************************************************************/
+TYPE frontPQ(struct PriorityQueue* pq) {
+	return getFirst(pq->data);
+}
+
+/*****************************************************************
+	removeFrontPQ - removes the value returned by frontPQ
+*****************************************************************/
+void removeFrontPQ(struct PriorityQueue* pq) {
+	removeFirst(pq->data);
+}
+
+/*****************************************************************
+	isEmptyPQ -  checks if there are any items in the PQ
+*****************************************************************/
+int isEmptyPQ(struct PriorityQueue* pq) {
+	if (sizeBST(pq->data) == 0) {
+		return 1;
+	}
+	else return 0;
+}
+
+/*****************************************************************
+	destroyPQ -  frees the memory used by the pq
+*****************************************************************/
+void destroyPQ(struct PriorityQueue* pq) {
+	destroyBST(pq->data);
+	free(pq);
+	pq = 0;
 }

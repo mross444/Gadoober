@@ -60,6 +60,7 @@ int main() {
 	*/
 
 	destroyBST(myTree);
+	myTree = 0;
 
 	return 0;
 }
