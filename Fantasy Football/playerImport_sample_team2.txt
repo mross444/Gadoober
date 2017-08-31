@@ -1,0 +1,16 @@
+12,Jay Ajayi,RB
+16,Dez Bryant,WR
+44,Ty Montgomery,RB
+50,Larry Fitzgerald,WR
+56,Russell Wilson,QB
+59,Mike Gillislee,RB
+62,Jimmy Graham,TE
+63,Tevin Coleman,RB
+103,Philip Rivers,QB
+111,Jordan Matthews,WR
+116,John Brown,WR
+117,Jack Doyle,TE
+143,Houston Texans,DST
+153,Jamaal Charles,RB
+189,Devin Funchess,WR
+246,Chris Boswell,K

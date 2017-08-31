@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 /*
  * CS 261 Data Structures
  * Assignment 5 unit tests
@@ -182,6 +184,7 @@ void testDyHeapSort(CuTest* test)
     }
     shuffle(heap);
     dyHeapSort(heap, taskCompare);
+
     CuAssertIntEquals(test, n, dySize(heap));
     for (int i = 0; i < n; i++)
     {
@@ -213,7 +216,7 @@ void testTaskNew(CuTest* test)
 void testTaskCompare(CuTest* test)
 {
     const int n = 10;
-    Task tasks[n];
+    Task tasks[TASK_ARRAY_SIZE];
     for (int i = 0; i < n; i++)
     {
         tasks[i].priority = i;

@@ -16,32 +16,37 @@
 # define EQ(A, B) ((A) == (B))
 # endif
 
-typedef struct DynArr DynArr;
+struct dyArray
+{
+	TYPE *data;		/* pointer to the data array */
+	int size;		/* Number of elements in the array */
+	int capacity;	/* capacity ofthe array */
+};
 
 /* Dynamic Array Functions */
-void initDynArr(DynArr *v, int capacity);	
-DynArr *newDynArr(int cap);
+void initdyArray(struct dyArray *v, int capacity);	
+struct dyArray *newdyArray(int cap);
 
-void freeDynArr(DynArr *v);
-void deleteDynArr(DynArr *v);
+void freedyArray(struct dyArray *v);
+void deletedyArray(struct dyArray *v);
 
-int sizeDynArr(DynArr *v);
+int dyArraySize(struct dyArray *v);
 
-void addDynArr(DynArr *v, TYPE val);
-TYPE getDynArr(DynArr *v, int pos);
-void putDynArr(DynArr *v, int pos, TYPE val);
-void swapDynArr(DynArr *v, int i, int  j);
-void removeAtDynArr(DynArr *v, int idx);
+void dyArrayAdd(struct dyArray *v, TYPE val);
+TYPE dyArrayGet(struct dyArray *v, int pos);
+void dyArrayPut(struct dyArray *v, int pos, TYPE val);
+void swapdyArray(struct dyArray *v, int i, int  j);
+void dyArrayRemoveAt(struct dyArray *v, int idx);
 
 /* Stack interface. */
-int isEmptyDynArr(DynArr *v);
-void pushDynArr(DynArr *v, TYPE val);
-TYPE topDynArr(DynArr *v);
-void popDynArr(DynArr *v);
+int isEmptydyArray(struct dyArray *v);
+void pushdyArray(struct dyArray *v, TYPE val);
+TYPE topdyArray(struct dyArray *v);
+void popdyArray(struct dyArray *v);
 
 /* Bag Interface */	
-/* Note addDynArr is already declared above*/
-int containsDynArr(DynArr *v, TYPE val);
-void removeDynArr(DynArr *v, TYPE val);
+/* Note dyArrayAdd is already declared above*/
+int containsdyArray(struct dyArray *v, TYPE val);
+void removedyArray(struct dyArray *v, TYPE val);
 
 #endif

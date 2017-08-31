@@ -1,7 +1,11 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #ifndef TASK_H
 #define TASK_H
 
 #define TASK_NAME_SIZE 128
+#define TASK_ARRAY_SIZE 10
+#define FORMAT_LENGTH 256
 
 typedef struct Task Task;
 

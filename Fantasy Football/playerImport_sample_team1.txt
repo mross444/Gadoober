@@ -1,0 +1,16 @@
+2,Le'Veon Bell,RB
+19,Amari Cooper,WR
+26,Lamar Miller,RB
+36,Travis Kelce,TE
+41,Joe Mixon,RB
+52,Martavis Bryant,WR
+81,Devante Parker,WR
+92,Tyrell Williams,WR
+94,Derrick Henry,RB
+107,Hunter Henry,TE
+113,Andy Dalton,QB
+126,C.J. Prosise,RB
+155,Kevin White,WR
+157,Arizona Cardinals,DST
+177,Robert Woods,WR
+252,Sebastian Janikowski,K

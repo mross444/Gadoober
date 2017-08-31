@@ -14,12 +14,7 @@
 #include <stdlib.h>
 #include "dynArray.h"
 
-struct DynArr
-{
-	TYPE *data;		/* pointer to the data array */
-	int size;		/* Number of elements in the array */
-	int capacity;	/* capacity ofthe array */
-};
+
 
 
 /* ************************************************************************
@@ -34,7 +29,7 @@ struct DynArr
 	post:	internal data array can hold cap elements
 	post:	v->data is not null
 */
-void initDynArr(DynArr *v, int capacity)
+void initdyArray(struct dyArray *v, int capacity)
 {
 	assert(capacity > 0);
 	assert(v!= 0);
@@ -49,15 +44,15 @@ void initDynArr(DynArr *v, int capacity)
 	param:	cap 	desired capacity for the dyn array
 	pre:	none
 	post:	none
-	ret:	a non-null pointer to a dynArr of cap capacity
+	ret:	a non-null pointer to a dyArray of cap capacity
 			and 0 elements in it.		
 */
-DynArr* newDynArr(int cap)
+struct dyArray* newdyArray(int cap)
 {
 	assert(cap > 0);
-	DynArr *r = (DynArr *)malloc(sizeof( DynArr));
+	struct dyArray *r = (struct dyArray *)malloc(sizeof(struct dyArray));
 	assert(r != 0);
-	initDynArr(r,cap);
+	initdyArray(r,cap);
 	return r;
 }
 
@@ -69,7 +64,7 @@ DynArr* newDynArr(int cap)
 	post:	size and capacity are 0
 	post:	the memory used by v->data is freed
 */
-void freeDynArr(DynArr *v)
+void freedyArray(struct dyArray *v)
 {
 	if(v->data != 0)
 	{
@@ -87,9 +82,9 @@ void freeDynArr(DynArr *v)
 	post:	the memory used by v->data is freed
 	post:	the memory used by d is freed
 */
-void deleteDynArr(DynArr *v)
+void deletedyArray(struct dyArray *v)
 {
-	freeDynArr(v);
+	freedyArray(v);
 	free(v);
 }
 
@@ -100,7 +95,7 @@ void deleteDynArr(DynArr *v)
 	pre:	v is not null
 	post:	v has capacity newCap
 */
-void _dynArrSetCapacity(DynArr *v, int newCap)
+void _dyArraySetCapacity(struct dyArray *v, int newCap)
 {	
 	/* check validity of v */
 	assert(v != 0);
@@ -114,18 +109,18 @@ void _dynArrSetCapacity(DynArr *v, int newCap)
 
 	/* if capacity is being increased a new array needs 
 	to be initialized */
-	DynArr *v2;
-	v2 = newDynArr(newCap);
+	struct dyArray *v2;
+	v2 = newdyArray(newCap);
 
 	/* Copy array values from old array into new array */
 	int i;
 	for (i = 0; i < v->size; i++) {
-		addDynArr(v2, v->data[i]);
+		dyArrayAdd(v2, v->data[i]);
 	}
 
 	/* free the old array, update the pointers to point 
 	to the new array */
-	freeDynArr(v);
+	freedyArray(v);
 	v->data = v2->data;
 	v->size = v2->size;
 	v->capacity = v2->capacity;
@@ -140,7 +135,7 @@ void _dynArrSetCapacity(DynArr *v, int newCap)
 	post:	none
 	ret:	the size of the dynamic array
 */
-int sizeDynArr(DynArr *v)
+int dyArraySize(struct dyArray *v)
 {
 	return v->size;
 }
@@ -149,19 +144,19 @@ int sizeDynArr(DynArr *v)
 
 	param: 	v		pointer to the dynamic array
 	param:	val		the value to add to the end of the dynamic array
-	pre:	the dynArry is not null
+	pre:	the dyArrayy is not null
 	post:	size increases by 1
 	post:	if reached capacity, capacity is doubled
 	post:	val is in the last utilized position in the array
 */
-void addDynArr(DynArr *v, TYPE val)
+void dyArrayAdd(struct dyArray *v, TYPE val)
 {
-	/* validate dynArry is not null */
+	/* validate dyArrayy is not null */
 	assert(v != 0);
 
 	/* Check to see if a resize is necessary */
 	if (v->size >= v->capacity) {
-		_dynArrSetCapacity(v, 2 * v->capacity);
+		_dyArraySetCapacity(v, 2 * v->capacity);
 	}
 
 	/* update the value at the new position and increment the size*/
@@ -180,13 +175,13 @@ void addDynArr(DynArr *v, TYPE val)
 	ret:	value stored at index pos
 */
 
-TYPE getDynArr(DynArr *v, int pos)
+TYPE dyArrayGet(struct dyArray *v, int pos)
 {
 	/* validate v is not null */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	/* validate index */
 	assert((pos >= 0) && (pos < v->size));
@@ -206,13 +201,13 @@ TYPE getDynArr(DynArr *v, int pos)
 	pre:	pos >= 0 and pos < size of the array
 	post:	index pos contains new value, val
 */
-void putDynArr(DynArr *v, int pos, TYPE val)
+void dyArrayPut(struct dyArray *v, int pos, TYPE val)
 {
 	/* validate v is not null */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	/* validate index */
 	assert((pos >= 0) && (pos < v->size));
@@ -230,19 +225,19 @@ void putDynArr(DynArr *v, int pos, TYPE val)
 	pre:	i, j >= 0 and i,j < size of the dynamic array
 	post:	index i now holds the value at j and index j now holds the value at i
 */
-void swapDynArr(DynArr *v, int i, int  j)
+void swapdyArray(struct dyArray *v, int i, int  j)
 {
 	/* validate v is not null */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	/* validate indeces */
 	assert((i >= 0) && (i < v->size) && (j >= 0) && (j < v->size));
 
 	/* swap the value at the two indeces */
-	TYPE temp = getDynArr(v, j);
+	TYPE temp = dyArrayGet(v, j);
 	v->data[j] = v->data[i];
 	v->data[i] = temp;
 }
@@ -258,13 +253,13 @@ void swapDynArr(DynArr *v, int i, int  j)
 	post:	the element at idx is removed
 	post:	the elements past idx are moved back one
 */
-void removeAtDynArr(DynArr *v, int idx)
+void dyArrayRemoveAt(struct dyArray *v, int idx)
 {
 	/* validate v is not null */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	/* validate index */
 	assert((idx >= 0) && (idx < v->size));
@@ -290,11 +285,11 @@ void removeAtDynArr(DynArr *v, int idx)
 	dynamic array stack has an item on it.
 
 	param:	v		pointer to the dynamic array
-	pre:	the dynArr is not null
+	pre:	the dyArray is not null
 	post:	none
 	ret:	1 if empty, otherwise 0
 */
-int isEmptyDynArr(DynArr *v)
+int isEmptydyArray(struct dyArray *v)
 {
 	/* validate v is not null */
 	assert(v != 0);
@@ -316,14 +311,14 @@ int isEmptyDynArr(DynArr *v)
 			if reached capacity, capacity is doubled
 			val is on the top of the stack
 */
-void pushDynArr(DynArr *v, TYPE val)
+void pushdyArray(struct dyArray *v, TYPE val)
 {
 	/* confirm valid pointer */
 	assert(v != 0);
 
 	/* double size of the array if capacity is reached */
 	if (v->size == v->capacity) {
-		_dynArrSetCapacity(v, 2 * v->capacity);
+		_dyArraySetCapacity(v, 2 * v->capacity);
 	}
 
 	/* add the new value to the last space of the array */
@@ -340,13 +335,13 @@ void pushDynArr(DynArr *v, TYPE val)
 	pre:	v is not empty
 	post:	no changes to the stack
 */
-TYPE topDynArr(DynArr *v)
+TYPE topdyArray(struct dyArray *v)
 {
 	/* validate v is not null */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	/* return the element at size - 1*/
 	return v->data[(v->size - 1)];
@@ -360,13 +355,13 @@ TYPE topDynArr(DynArr *v)
 	post:	size is decremented by 1
 			the top has been removed
 */
-void popDynArr(DynArr *v)
+void popdyArray(struct dyArray *v)
 {
 	/* validate v is not null */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	/* decrement size of the array.  no need to change the value, as 
 	the position will be invalid, and the value be overwritten when 
@@ -389,17 +384,17 @@ void popDynArr(DynArr *v)
 	pre:	v is not empty
 	post:	no changes to the bag
 */
-int containsDynArr(DynArr *v, TYPE val)
+int containsdyArray(struct dyArray *v, TYPE val)
 {
 	/* check v is valid */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	int i;
 
-	/* loop through each element of the DynArr*/
+	/* loop through each element of the dyArray*/
 	for (i = 0; i < v->size; i++) {
 		if (val == v->data[i]) {
 			return 1;  /* match found - exit function */
@@ -421,19 +416,19 @@ int containsDynArr(DynArr *v, TYPE val)
 	post:	val has been removed
 	post:	size of the bag is reduced by 1
 */
-void removeDynArr(DynArr *v, TYPE val)
+void removedyArray(struct dyArray *v, TYPE val)
 {
 	/* check v is valid */
 	assert(v != 0);
 
 	/* validate v is not empty */
-	assert(!isEmptyDynArr(v));
+	assert(!isEmptydyArray(v));
 
 	int i;
 
 	for (i = 0; i < v->size; i++) {
 		if (val == v->data[i]) {		/* match found */
-			removeAtDynArr(v, i);
+			dyArrayRemoveAt(v, i);
 			return;
 		}
 	}

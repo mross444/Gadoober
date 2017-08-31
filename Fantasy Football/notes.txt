@@ -1,0 +1,4 @@
+fuck the commish
+
+player import file - Rank(PlayerID),Name,Pos
+team import file - TeamID,PlayerID
