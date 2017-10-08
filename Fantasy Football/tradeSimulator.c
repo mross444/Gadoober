@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/**********************************************************************
+						  Player functions
+**********************************************************************/
 void initPlayer(struct Player * pl, int id, char * pos, char * nm) {
 	pl->playerID = id;
 	strcpy(pl->playerPosition, pos);
@@ -32,15 +36,18 @@ void deletePlayer(struct Player * pl) {
 	free(pl);
 }
 
-
-void initTeam(struct Team * team, int id) {
+/**********************************************************************
+						   Team functions
+**********************************************************************/
+void initTeam(struct Team * team, int id, char * name) {
 	team->teamID = id;
 	team->teamNumPlayers = 0;
+	strcpy(team->teamName, name);
 }
 
-struct Team * createTeam(int id) {
+struct Team * createTeam(int id, char * name) {
 	struct Team * newTeam = malloc(sizeof(struct Team));
-	initTeam(newTeam, id);
+	initTeam(newTeam, id, name);
 	return newTeam;
 }
 
@@ -48,16 +55,20 @@ int getTeamNumPlayers(struct Team * tm) {
 	return tm->teamNumPlayers;
 }
 
+char * getTeamName(struct Team * tm) {
+	return tm->teamName;
+}
+
 void increaseTeamCount(struct Team * tm) {
 	tm->teamNumPlayers++;
 }
 
-void addPlayerToTeam(struct Player * pl, struct Team * tm) {
+void addPlayerToTeam(struct Team * tm, int pl) {
 	tm->teamPlayers[getTeamNumPlayers(tm)] = pl;
 	increaseTeamCount(tm);
 }
 
-struct Player * getPlayerFromTeam(struct Team * tm, int idx) {
+int getPlayerFromTeam(struct Team * tm, int idx) {
 	return tm->teamPlayers[idx];
 }
 

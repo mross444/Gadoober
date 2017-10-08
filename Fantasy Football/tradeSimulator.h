@@ -4,6 +4,10 @@
 #define PLAYER_NAME_SIZE 255
 #define POS_NAME_SIZE 5
 #define TEAM_PLAYER_SIZE 25
+#define MAX_TEAMS 20
+#define MAX_TRADES 1000
+#define MAX_PLAYERS 1000
+#define TEAM_NAME_SIZE 100
 
 struct Player {
 	int playerID;
@@ -13,44 +17,55 @@ struct Player {
 
 struct Team {
 	int teamID;
-	struct Player * teamPlayers[TEAM_PLAYER_SIZE];
+	char teamName[TEAM_NAME_SIZE];
+	int teamPlayers[TEAM_PLAYER_SIZE];
 	int teamNumPlayers;
 };
 
 struct Trade {
-	int tradeTeam1;
-	int tradeTeam2;
-	struct Player * tradePlayer1;
-	struct Player * tradePlayer2;
+	int tradePlayer1;
+	int tradePlayer2;
 	int tradeTeam1Improvement;
 	int tradeTeam2Improvement;
-	int tradeToalImpovement;
 };
 
 struct Simulator {
-	struct Team ** simulatorTeams;
-	struct Trade ** simulatorTrades;
+	struct Player * simulatorPlayers[MAX_PLAYERS];
+	struct Team * simulatorTeams[MAX_TEAMS];
+	struct Trade * simulatorTrades[MAX_TRADES];
 	int numTeams;
+	int numPlayers;
+	int numTrades;
 };
 
-
-void initPlayer(struct Player *, int, char*, char*);
-struct Player * createPlayer(int, char*, char*);
+// Player functions
+void initPlayer(struct Player *, int, char *, char *);
+struct Player * createPlayer(int, char *, char*);
 int getPlayerRank(struct Player *);
 char * getPlayerName(struct Player *);
 char * getPlayerPosition(struct Player *);
 void deletePlayer(struct Player *);
 
-void initTeam(struct Team *, int);
-struct Team * createTeam(int);
+// Team functions
+void initTeam(struct Team *, int, char *);
+struct Team * createTeam(int, char *);
+char * getTeamName(struct Team *);
 int getTeamNumPlayers(struct Team *);
 void increaseTeamCount(struct Team *);
-void addPlayerToTeam(struct Player *, struct Team *);
-struct Player * getPlayerFromTeam(struct Team *, int);
+void addPlayerToTeam(struct Team *, int);
+int getPlayerFromTeam(struct Team *, int);
 int calcFirstTeamScore(struct Team *);
 void deleteTeam(struct Team *);
 
+// Trade functions
 
 
+// Simulator functions
+void initSim(struct Simulator *);
+struct Simulator * createSim();
+
+void simAddPlayer(struct Simulator *, int, char *, char *, int);
+int simCalcFirstTeamScore(struct Simulator *, struct Team *);
+void deleteSim(struct Simulator *);
 
 #endif
