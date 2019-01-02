@@ -1,0 +1,930 @@
+<html xmanifest="cache.appcache">
+   <head>
+      <title>TrainerFriendPalBuddy</title>
+      <meta name="description" content="Timer and segment tracking for cycling work.">
+      <meta name="keywords" content="cycling online timer free ipad countdown timer full screen"> 
+      <meta name="robots" content="index, follow"> 
+      <meta name="revisit-after" content="2 days"> 
+      <meta name="copyright" content="Copyright &copy; 2019 Michael Ross"> 
+      <meta name="publisher" content="Michael Ross"> 
+      <meta name="Author" content="Michael Ross - Applications Developer"> 
+      <meta name="rating" content="general"> 
+      <meta name="distribution" content="Global"> 
+      <meta name="resource-type" content="document"> 
+      <meta name="owns" content="Michael Ross"> 
+      <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">-->
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-status-bar-style" content="black">
+      <link rel="apple-touch-startup-image" media="screen and (orientation: portrait)"  href="/Default.png" />
+      <link rel="apple-touch-startup-image" media="screen and (orientation: landscape)"  href="/Default-Landscape.png" />
+      <link rel="apple-touch-icon" href="iphoneicon114.png" />
+      <link rel="apple-touch-icon" sizes="59x59" href="iphoneicon59.png" />
+      <link rel="apple-touch-icon" sizes="72x72" href="iphoneicon72.png" />
+      <link rel="apple-touch-icon" sizes="114x114" href="iphoneicon114.png" />
+      <link rel="apple-touch-icon" sizes="129x129" href="iphoneicon129.png" />
+   
+      <!-- =============== START SCRIPTS ==================== -->
+
+      <!-- Sound -->
+      <!-- <script type="text/javascript" src="Scripts/soundmanager2-nodebug-jsmin.js"></script> -->
+      <!--<script type="text/javascript" src="Scripts/soundmanager2.js"></script>--> 
+      <!-- <script type="text/javascript"> -->
+      <!--    soundManager.url = "Scripts/"; -->
+      <!--    //soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in -->
+      <!--    soundManager.onready(function () { -->
+      <!--       soundManager.createSound({ -->
+      <!--          id: "Beep", -->
+      <!--          url: "TimerBeep.mp3" -->
+      <!--          //url: "TestTimerBeep.mp3" -->
+      <!--       }); -->
+      <!--    }); -->
+      <!-- </script> -->
+
+      <!-- iPhone/iPad specific - IsIPhone -->
+      <script type="text/javascript">
+         var IsIPhone = false;
+
+         if ('standalone' in navigator && !navigator.standalone && (/iphone|ipod|ipad/gi).test(navigator.platform) && (/Safari/i).test(navigator.appVersion)) {
+            IsIPhone = (/iphone/gi).test(navigator.platform);
+
+            document.title = "Timer";
+         }
+
+         if (IsIPhone) {
+            //document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">');
+         } else {
+            document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">');
+         }
+      </script>
+
+      <!-- PlaySound() -->
+      <!-- <script language="javascript" type="text/javascript"> -->
+      <!--    function PlaySound(soundfile) { -->
+      <!--       document.getElementById("dummy").innerHTML = -->
+      <!--          "<embed src=\"" + soundfile + "\" hidden=\"true\" autostart=\"true\" loop=\"false\" />"; -->
+      <!--       } -->
+      <!-- </script> -->
+
+      <!-- Google Analtyics -->
+      <script type="text/javascript">
+      /*
+         var _gaq = _gaq || [];
+         _gaq.push(['_setAccount', 'UA-27797950-3']);
+         _gaq.push(['_setDomainName', 'ipadstopwatch.com']);
+         _gaq.push(['_setAllowLinker', true]);
+         _gaq.push(['_trackPageview']);
+
+         (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+               var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+      */
+      </script>
+      <!-- <script type="text/javascript" src="Scripts/jquery-1.4.1.js"></script> -->
+      <!-- <script type="text/javascript" src="Scripts/jquery.cookie.js"></script> -->
+
+      <!-- Adjust Size -->
+      <script>
+         var g_AdjustingSize = false;
+
+         function AdjustSize() {
+            g_AdjustingSize = true;
+            $('table').hide();
+            g_AdjustSizeSync_InitialCall = true;
+            AdjustSizeSync();
+         }
+
+         var g_AdjustSizeSync_InitialCall;
+         function AdjustSizeSync() {
+            var FontSize = 30;
+
+            if (g_AdjustSizeSync_InitialCall) {
+               g_AdjustSizeSync_InitialCall = false;
+               SetFontSize(FontSize);
+               setTimeout(AdjustSizeSync, 250);
+               return;
+            }
+
+            var ChangeBy = 30; // initial chanbe by 30
+            var MinChangeBy = 8;
+
+            while (true) {
+               SetFontSize(FontSize);
+
+               if ($('table').width() > getAvailableWidth()) {
+                  FontSize -= ChangeBy;
+
+                  if (ChangeBy == MinChangeBy) break;
+
+                  ChangeBy /= 2;
+
+                  if (ChangeBy < MinChangeBy) {
+                     ChangeBy = MinChangeBy;
+                  }
+               }
+
+               FontSize += ChangeBy;
+            }
+
+            g_AdjustingSize = false;
+            $('table').show();
+         }
+
+         function getAvailableWidth() {
+             return $('body').width() - 50;
+         }
+
+         function SetFontSize(pFontSize) {
+            $('.Time').css('fontSize', pFontSize); // 110
+            var FontSize2 = pFontSize * .33;
+            $('button').css('fontSize', FontSize2); // 36
+            $('#Milliseconds').css('fontSize', FontSize2); // 36
+         }
+
+         function GetWidthAndHeightString() {
+            var oWindow = $(window);
+            function Round(pNumber) {
+               return Math.round(pNumber / 10) * 10;
+            }
+            var WidthAndHeight = Round(oWindow.width()) + "x" + Round(oWindow.height());
+            return WidthAndHeight;
+         }
+
+         /*
+         var g_TrackWindowSizeId;
+         function TrackWindowSize() {
+            _gaq.push(['_trackEvent', 'Timer', 'Resized', GetWidthAndHeightString(), undefined, true]);
+         }
+         
+         $(window).resize(function () {
+            AdjustSize();
+             
+            if(g_TrackWindowSizeId != undefined) {
+               clearTimeout(g_TrackWindowSizeId);
+            }
+             
+            g_TrackWindowSizeId = setTimeout(TrackWindowSize, 1000);
+         });
+         
+         
+         $(function () {
+            AdjustSize();
+            _gaq.push(['_trackEvent', 'Timer', 'Initial Size', GetWidthAndHeightString(), undefined, true]);
+         });
+         */
+
+      </script>
+
+      <!-- Helpers -->
+      <script language="javascript">
+         function ToTimeComponents(pMilliseconds) {
+            var Milliseconds = pMilliseconds % 1000;
+            var TotalSeconds = (pMilliseconds - Milliseconds) / 1000;
+            var Seconds = TotalSeconds % 60;
+            var TotalMinutes = (TotalSeconds - Seconds) / 60;
+            var Minutes = TotalMinutes % 60;
+            var Hours = (TotalMinutes - Minutes) / 60;
+            return {
+               Hours: Hours,
+               Minutes: Minutes,
+               Seconds: Seconds,
+               Milliseconds: Milliseconds,
+               GetTotalMilliseconds: function () {
+                  var TotalMinutes = (this.Hours * 60) + this.Minutes;
+                  var TotalSeconds = (TotalMinutes * 60) + this.Seconds;
+                  var TotalMilliseconds = (TotalSeconds * 1000) + this.Milliseconds;
+                  return TotalMilliseconds;
+               }
+            };
+         }
+      </script>
+
+      <script language="javascript">
+         function IsTouchDevice() {
+            var el = document.createElement('div');
+            el.setAttribute('ongesturestart', 'return;');
+            if (typeof el.ongesturestart == "function") {
+               return true;
+            } else {
+               return false
+            }
+         }
+
+         /*
+         $.fn.clickOrTouch = function (pFunction) {
+            if (IsTouchDevice()) {
+               $(this).bind('touchstart', pFunction);
+            } else {
+               $(this).click(pFunction);
+            }
+         };
+         */
+      </script>
+
+      <!-- Adjust Time -->
+      <script language="javascript">
+         /*
+         $(function () {
+            var AddHour = function (Time) {
+               Time.Hours++;
+            };
+
+            var AddMinute = function (Time) {
+               Time.Minutes++;
+
+               if (Time.Minutes == 60) {
+                  AddHour(Time);
+                  Time.Minutes = 0;
+               }
+            };
+
+            var AddSecond = function (Time) {
+               Time.Seconds++;
+
+               if (Time.Seconds == 60) {
+                  AddMinute(Time);
+                  Time.Seconds = 0;
+               }
+            };
+
+            var SubtractHour = function (Time) {
+               Time.Hours--;
+
+               if (Time.Hours < 0) {
+                  Time.Hours = 0;
+                  return false;
+               }
+
+               return true;
+            };
+
+            var SubtractMinute = function (Time) {
+               Time.Minutes--;
+
+               if (Time.Minutes == -1) {
+                  if (SubtractHour(Time)) {
+                     Time.Minutes = 59;
+                     return true;
+                  } else {
+                     Time.Minutes = 0;
+                     return false;
+                  }
+               } else {
+                  return true;
+               }
+            };
+
+            var SubtractSecond = function (Time) {
+               Time.Seconds--;
+
+               if (Time.Seconds == -1) {
+                  if (SubtractMinute(Time)) {
+                     Time.Seconds = 59;
+                  } else {
+                     Time.Seconds = 0;
+                  }
+               }
+            };
+
+            $(".oAddHour").clickOrTouch(function () {
+               var Time = ToTimeComponents(GetRemainingTime());
+               AddHour(Time);
+               Time.Milliseconds = 0;
+               SetRemainingTime(Time.GetTotalMilliseconds());
+            });
+
+            $(".oAddMinute").clickOrTouch(function () {
+               var Time = ToTimeComponents(GetRemainingTime());
+               AddMinute(Time);
+               Time.Milliseconds = 0;
+               SetRemainingTime(Time.GetTotalMilliseconds());
+            });
+
+            $(".oAddSecond").clickOrTouch(function () {
+               var Time = ToTimeComponents(GetRemainingTime());
+               AddSecond(Time);
+               Time.Milliseconds = 0;
+               SetRemainingTime(Time.GetTotalMilliseconds());
+            });
+
+            $(".oSubtractHour").clickOrTouch(function () {
+               var Time = ToTimeComponents(GetRemainingTime());
+               SubtractHour(Time);
+               Time.Milliseconds = 0;
+               SetRemainingTime(Time.GetTotalMilliseconds());
+            });
+
+            $(".oSubtractMinute").clickOrTouch(function () {
+               var Time = ToTimeComponents(GetRemainingTime());
+               SubtractMinute(Time);
+               Time.Milliseconds = 0;
+               SetRemainingTime(Time.GetTotalMilliseconds());
+            });
+
+            $(".oSubtractSecond").clickOrTouch(function () {
+               var Time = ToTimeComponents(GetRemainingTime());
+               SubtractSecond(Time);
+               Time.Milliseconds = 0;
+               SetRemainingTime(Time.GetTotalMilliseconds());
+            });
+         });
+         */
+      </script>
+
+      <!-- DisplayTime() -->
+      <script language="javascript">
+         var g_Hours;
+         var g_Minutes;
+         var g_Seconds;
+
+         function MillisToTime(pMilliseconds) {
+            var Milliseconds = pMilliseconds % 1000;
+            var TotalSeconds = (pMilliseconds - Milliseconds) / 1000;
+            var Seconds = TotalSeconds % 60;
+            var TotalMinutes = (TotalSeconds - Seconds) / 60;
+            var Minutes = TotalMinutes % 60;
+            var Hours = (TotalMinutes - Minutes) / 60;
+                
+            return { Hours: Hours, Minutes: Minutes, Seconds: Seconds, Milliseconds: Milliseconds };
+         }
+            
+         function DisplayTime(pMilliseconds, pbUpdateAllClasses) {
+            var bUpdateAllClasses = false;
+            if (pbUpdateAllClasses !== undefined) {
+               bUpdateAllClasses = pbUpdateAllClasses;
+            }
+
+            var Time = MillisToTime(pMilliseconds);
+                
+            var Milliseconds = Time.Milliseconds;
+            var Seconds = Time.Seconds;
+            var Minutes = Time.Minutes; 
+            var Hours = Time.Hours;
+
+            var bHoursChanged = false;
+            if (g_Hours != Hours) {
+               bHoursChanged = true;
+               g_Hours = Hours;
+               $('#Hours').html(AddZeroPadding(Hours));
+            }
+
+            var bMinutesChanged = false;
+            if (g_Minutes != Minutes) {
+               bMinutesChanged = true;
+               g_Minutes = Minutes;
+               $('#Minutes').html(AddZeroPadding(Minutes));
+            }
+
+            var bSecondsChanged = false;
+            if (g_Seconds != Seconds) {
+               bSecondsChanged = true;
+               g_Seconds = Seconds;
+               $('#Seconds').html(AddZeroPadding(Seconds));
+            }
+
+            $('#Milliseconds').html(AddZeroPadding3(Milliseconds));
+
+            if (Hours == 0) {
+               if (bHoursChanged || bUpdateAllClasses) {
+                  $('#Hours').addClass("TimeZero");
+               }
+
+               if (Minutes == 0) {
+                  if (bMinutesChanged || bUpdateAllClasses) {
+                     $('#Minutes').addClass("TimeZero");
+                  }
+
+                  if (bSecondsChanged || bUpdateAllClasses) {
+                     if (Seconds == 0) {
+                        $('#Seconds').addClass("TimeZero");
+                     } else {
+                        $('#Seconds').removeClass("TimeZero");
+                     }
+                  }
+               } else {
+                  if (bMinutesChanged || bUpdateAllClasses) {
+                     $('#Minutes').removeClass("TimeZero");
+                  }
+                  if (bSecondsChanged || bUpdateAllClasses) {
+                     $('#Seconds').removeClass("TimeZero");
+                  }
+               }
+            } else {
+              if (bHoursChanged || bUpdateAllClasses) {
+                  $('#Hours').removeClass("TimeZero");
+               }
+
+               if (bMinutesChanged || bUpdateAllClasses) {
+                  $('#Minutes').removeClass("TimeZero");
+               }
+
+               if (bSecondsChanged || bUpdateAllClasses) {
+                  $('#Seconds').removeClass("TimeZero");
+               }
+            }
+         }
+
+         function AddZeroPadding(pNumber) {
+            if (pNumber < 10) return "0" + pNumber;
+            return pNumber;
+         }
+
+         function AddZeroPadding3(pNumber) {
+            if (pNumber < 10) return "00" + pNumber;
+            if (pNumber < 100) return "0" + pNumber;
+            return pNumber;
+         }
+      </script>
+
+      <!-- Load/Save to cookie -->
+      <script language="javascript">
+         function LoadStateFromCookie() {
+            if ($.cookie("Timer-StartTime") != null) g_StartTime = parseInt($.cookie("Timer-StartTime"));
+            if ($.cookie("Timer-Offset") != null) g_LeftOf = parseInt($.cookie("Timer-Offset"));
+            if ($.cookie("Timer-State") != null) g_State = $.cookie("Timer-State");
+            if ($.cookie("Timer-CountdownFrom") != null) g_CountdownFrom = parseInt($.cookie("Timer-CountdownFrom"));
+         }
+
+         function SaveStateToCookie() {
+            var CONST_CookieNeverExpiresValue = 30 * 12 * 5; // 5 years from now
+            var CONST_CookieNeverExpires = { expires: CONST_CookieNeverExpiresValue };
+
+            $.cookie("Timer-StartTime", g_StartTime, CONST_CookieNeverExpires);
+            $.cookie("Timer-Offset", g_LeftOf, CONST_CookieNeverExpires);
+            $.cookie("Timer-State", g_State, CONST_CookieNeverExpires);
+            $.cookie("Timer-CountdownFrom", g_CountdownFrom, CONST_CookieNeverExpires);
+         }
+      </script>
+
+      <!-- Step, UpdateTimeDisplay(), CalculateElapsedMilliseconds() -->
+      <script language="javascript">
+         var g_LeftOf = 0; // these values are store and loaded from the cookie
+         var g_StartTime;
+         var g_State = "Adjusting";
+         var g_CountdownFrom = 5 * 60 * 1000; // default 5 minutes
+
+         function CalculateElapsedMilliseconds() { // this is the time that gets displayed
+            if (g_State != "Running") return g_LeftOf;
+
+            var CurrentTime = new Date().getTime();
+            var ElapsedTime = CurrentTime - g_StartTime;
+            return ElapsedTime + g_LeftOf;
+         }
+
+         function SetRemainingTime(pMilliseconds) {
+            g_LeftOf = 0;
+            g_StartTime = new Date().getTime();
+            g_CountdownFrom = pMilliseconds;
+            UpdateTimeDisplay(true);
+            SaveStateToCookie();
+         }
+
+         function GetRemainingTime() {
+            var RemainingTime = g_CountdownFrom - CalculateElapsedMilliseconds();
+
+            if (RemainingTime < 0) {
+               RemainingTime = 0;
+            }
+
+            return RemainingTime;
+         }
+
+         function UpdateTimeDisplay(pbUpdateAllClasses) {
+            var RemainingTime = GetRemainingTime();
+            DisplayTime(RemainingTime, pbUpdateAllClasses);
+         }
+
+         function OnTimerCompleted() {
+            StopTimer();
+            UpdateControls();
+            UpdateTimeDisplay();
+            soundManager.play("Beep")
+         }
+
+         function Step() {
+            if (g_State != "Running") return;
+
+            var RemainingTime = GetRemainingTime();
+            if (RemainingTime == 0) {
+               UpdateTimeDisplay();
+               OnTimerCompleted();
+            } else {
+               UpdateTimeDisplay();
+               // millis = 1000 / fps
+               // 84 millis = 12 fps
+               setTimeout(arguments.callee, 42);
+            }
+         }
+      </script>
+
+      <!-- Start/Stop/Reset/Adjust timer -->
+      <script language="javascript">
+         function GetTrackTimeString() {
+            var Time = MillisToTime(CalculateElapsedMilliseconds());
+                
+            var Hours = Time.Hours;
+            var Minutes = Time.Minutes;
+            var Seconds = Time.Seconds;
+                
+            function Round(pNumber) {
+               return Math.round(pNumber / 10) * 10;
+            }
+
+            return Hours + ":" + Minutes + ":" + Round(Seconds);
+         }
+            
+         function StartTimer() {
+            _gaq.push(['_trackEvent', 'Timer', 'Start', GetTrackTimeString()]);
+            g_StartTime = new Date().getTime();
+            g_State = "Running";
+            SaveStateToCookie();
+            Step();
+         }
+
+         function StopTimer() {
+            _gaq.push(['_trackEvent', 'Timer', 'Stop', GetTrackTimeString()]);
+            g_LeftOf = CalculateElapsedMilliseconds();
+            g_State = "Paused";
+            SaveStateToCookie();
+         }
+
+         function ResetTimer() {
+            _gaq.push(['_trackEvent', 'Timer', 'Reset', GetTrackTimeString()]);
+            g_LeftOf = 0;
+            //StopTimer(); // takes care of saving to cookie
+            SaveStateToCookie();
+            UpdateTimeDisplay();
+         }
+      </script>
+
+      <!-- g_IsOnline -->
+      <script language="javascript">
+         var g_IsOnline = false;
+      </script>
+       
+      <!-- <script language="javascript" src="onlineonly.js"></script> -->
+        
+      <!-- Offline Tracking -->
+      <script language="javascript">
+         
+         /*
+         if (!g_IsOnline) {
+            var OfflineUseCount = 0;
+
+            if ($.cookie("OfflineUseCount") != null) {
+               OfflineUseCount = parseInt($.cookie("OfflineUseCount"));
+            }
+
+            OfflineUseCount++;
+            $.cookie("OfflineUseCount", OfflineUseCount);
+         } else {
+            $(function () {
+               if ($.cookie("OfflineUseCount") != null) {
+                  var OfflineUseCount = parseInt($.cookie("OfflineUseCount"));
+                  _gaq.push(['_trackEvent', 'Timer', 'Used Offline', OfflineUseCount, undefined, true]);
+                  $.cookie("OfflineUseCount", null);
+               }
+            });
+         }
+         */
+      </script>
+
+      <!-- UpdateControls() -->
+      <script language="javascript">
+           
+         // start/pause, (reset, continue)
+         function InitialHideAjustControls() {
+            $(".oAdjustControls button").hide();
+         }
+
+         function HideAjustControls() {
+            $(".oAdjustControls button").slideUp();
+         }
+
+         function ShowAjustControls() {
+            //$(".oAdjustControls").show();
+            $(".oAdjustControls button").slideDown();
+         }
+
+         function UpdateControls() {
+            if (g_State == "Running") {
+               $('#Start').hide();
+               //$('#Reset').hide();
+               $('#Adjust').hide();
+               $('#Done').hide();
+               $('#Stop').show();
+               HideAjustControls();
+            } else if (g_State == "Adjusting") {
+               $('#Start').hide();
+               $('#Adjust').hide();
+               $('#Stop').hide();
+
+               //$('#Reset').show();
+               $('#Done').show();
+               setTimeout(function () {
+                  ShowAjustControls();
+               }, 100);
+            } else { // paused
+               HideAjustControls();
+
+               var oStartButton = $('#Start');
+
+               $('#Adjust').show();
+               $('#Done').hide();
+               $('#Stop').hide();
+               //$('#Reset').hide();
+
+               if (GetRemainingTime() == 0) {
+                  oStartButton.hide();
+               } else {
+                  if (g_LeftOf == 0) {
+                     oStartButton.html("Start");
+                  } else {
+                     oStartButton.html("Continue");
+                  }
+
+                  oStartButton.show();
+               }
+            }
+         }
+      </script>
+
+      <!-- Entry Point -->
+      <script language="javascript">
+         SetRemainingTime(16000);
+         UpdateTimeDisplay(true);
+         console.log("hello");
+         /*
+         $(function () {
+            InitialHideAjustControls();
+            LoadStateFromCookie();
+
+            if (location.hash != undefined && location.hash.length > 0) {
+               var hash = location.hash.substr(1); // remove # sign
+               location.hash = "";
+               g_CountdownFrom = parseInt(hash);
+               g_State = "Paused";
+            }
+
+            if (g_State == "Running") {
+               Step();
+            }
+
+            UpdateTimeDisplay();
+
+            $('#Adjust').clickOrTouch(function () {
+               g_State = "Adjusting";
+               UpdateControls();
+               _gaq.push(['_trackEvent', 'Timer', 'Adjust', GetTrackTimeString(), undefined, true]);
+            });
+
+            $('#Done').clickOrTouch(function () {
+               g_State = "Paused";
+               UpdateControls();
+            });
+
+            $('#Start').clickOrTouch(function () {
+               StartTimer();
+               UpdateControls();
+               return false;
+            });
+
+            $('#Stop').clickOrTouch(function () {
+               StopTimer();
+               UpdateControls();
+               UpdateTimeDisplay();
+               return false;
+            });
+
+                //                $('#Reset').clickOrTouch(function () {
+                //                    ResetTimer();
+                //                    UpdateControls();
+                //                    return false;
+                //                });
+
+            UpdateControls();
+            _gaq.push(['_trackEvent', 'Stopwatch', 'Version', 'Version 1.1 (2010-12-25 12.11b)', undefined, true]);
+         });
+         */
+      </script>
+
+   <!-- =============== END SCRIPTS ==================== -->
+
+   <!-- ===============  START CSS  ==================== -->
+
+   <style> 
+      
+      * {
+         font-family:"Lucida Grande", Tahoma, Arial, Verdana, sans-serif;
+      }
+
+      a {
+         color: #0066cc;
+         text-decoration: none;
+      }
+
+      a:hover {
+         text-decoration: underline;
+      }
+
+      body {
+         background: white;
+      }
+   
+      button {
+         background-color:#f5f5f5;
+         border:1px solid #dedede;
+         border-top:1px solid #eee;
+         border-left:1px solid #eee;
+         line-height:130%;
+         text-decoration:none;
+         font-weight:bold;
+         color:#565656;
+         cursor:pointer;
+         width:auto;
+         overflow:visible;
+         padding:4px 10px 3px 7px;
+      }
+
+      button[type] {
+         padding:5px 10px 5px 7px; /* Firefox */
+         line-height:17px; /* Safari */
+      }
+
+      button.Add, button.Subtract {
+         width:100%;
+         font-weight:bold;
+         text-align:center;
+         /* padding-top:5px; */
+         padding-bottom:5px;
+         /* margin:5px; */
+         margin: 0;
+      }
+
+      .AdjustControls td {
+         padding: 5px;
+      }
+
+      .hide { display: none; }
+
+      button.Add /* , button.Add:hover */ {
+         background:#e6efc2;
+         border:solid 1px #c6d880;
+         color:#529214;
+      }
+
+      button.Subtract /* , button.Subtract:hover */ {
+         background:#fbe3e4;
+         border:solid 1px #fbc2c4;
+         color:#d12f19;
+      }
+
+      *:first-child+html button[type]{
+         padding:4px 10px 3px 7px; /* IE7 */
+      }
+
+
+      /* REGULAR */
+      button.regular {
+         background-color:#dff4ff;
+         border:1px solid #c2e1ef;
+         color:#336699;
+      }
+   </style>
+   
+   <style type="text/css">
+      .Time {
+         font-size: 110pt; /* TODO: Use relative font size */
+         color: #444444;
+      }
+            
+      #Milliseconds {
+         font-size: 36pt; /* TODO: Use relative font size */
+         font-weight:normal;
+         color: #444444;
+      }
+            
+     .TimeZero {
+         color: #cccccc;
+      }
+            
+      .Seperator {
+         color: #cccccc;
+      }
+            
+      button {
+         font-size: 36pt; /* TODO: Use relative font size */
+         padding-left: 10px;
+         padding-right: 10px;
+         margin-left: 10px;
+      }
+            
+      h1 {
+         font-size:9pt; /* TODO: Use relative font size??? */
+         font-weight:normal;
+         background: #444444;
+         color: #aaa;
+         display:block;
+         padding: 5px;
+         font-style:italic;
+      }
+            
+      h1 a {
+         font-style:normal;
+         font-size:12pt; /* TODO: Use relative font size??? */
+         text-decoration:none;
+         color:#cccccc;
+         margin-left: auto;
+         margin-right: auto;
+      }
+            
+      h2 {
+         font-size: 9pt;
+      }
+
+      table {
+         /*display:none;*/
+      }
+            
+      .Thumbnail {
+         background: url(images/Frame.png);
+         width:320px;
+         height:200px;
+         position:relative;
+      }
+          
+      .Thumbnail img {
+         border: 0;
+         position: absolute;
+         left:7px;
+         top:6px;
+      }
+          
+      .OtherWatch {
+         float:left;
+         width:320px;
+         margin-left: 10px;
+         margin-right: 10px;
+         margin-bottom: 40px;
+         cursor: hand;
+      }
+          
+      .OtherWatch .Title {
+         margin-left: 8px;
+         color: #999999;
+      }
+
+   </style>
+
+   <!-- ===============  END CSS  ==================== -->
+
+   </head>
+
+   <body style="margin:0px;">
+   <div style="width:100%;height:100%" ontouchmove="preventScrolling(event);">
+      <h1>TrainerBuddyPalFriend</h1>
+
+      <table border="0" cellpadding="0" cellspacing="0" style="font-weight:bold;">
+         <tr class="AdjustControls oAdjustControls">
+            <td><button class="Add oAddHour">+</button></td>
+            <td></td>
+            <td><button class="Add oAddMinute">+</button></td>
+            <td></td>
+            <td><button class="Add oAddSecond">+</button></td>
+            <td></td>
+         </tr>
+         <tr>
+            <td><div class="Time" id="Hours"></div></td>
+            <td><div class="Time Seperator">:</div></td>
+            <td><div class="Time" id="Minutes"></div></td>
+            <td><div class="Time Seperator">:</div></td>
+            <td><div class="Time" id="Seconds"></div></td>
+            <td><div class="Time" id="Milliseconds"></div></td>
+         </tr>
+         <tr class="AdjustControls oAdjustControls">
+            <td><button class="Subtract oSubtractHour">-</button></td>
+            <td></td>
+            <td><button class="Subtract oSubtractMinute">-</button></td>
+            <td></td>
+            <td><button class="Subtract oSubtractSecond">-</button></td>
+            <td></td>
+         </tr>
+         <tr>
+            <td colspan="5" align="right" style="padding-right:3px;">
+               <button id="Adjust">Adjust</button>
+               <!--<button id="Reset">Reset</button>-->
+               <button id="Done">Done</button>
+               <button id="Start" class="positive">Start</button>
+               <button id="Stop">Pause</button>
+            </td>
+            <td>&nbsp;</td>
+         </tr>
+      </table>
+           <!--<a href="/" style="margin-left:10px;">Try our Stopwatch</a>-->
+   </div>
+   <!-- <div id="soundmanager-debug"></div> -->
+
+   </body>
+
+</html>
