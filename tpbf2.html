@@ -1,0 +1,413 @@
+<html>
+
+<head>
+	
+<style>
+
+   * {
+     font-family: Lato; 
+     font-style: normal; 
+     font-variant: normal; 
+     font-weight: 400; 
+     line-height: 26.4px; 
+     color: #ffffe6;
+   } 
+   
+   body {
+         background: #383838;
+         margin: 40px;
+   }
+
+   .wrapper {
+      display: grid;
+      grid-template-columns: 900px 200px;
+      background-color: #fff;
+      color: #444;
+    }
+
+    .box {
+        background-color: #444;
+        color: #fff;
+        padding: 20px;
+
+    }
+
+    .a {
+        grid-column: 1;
+
+    }
+    .b {
+        grid-column: 2 ;
+        width:700px;
+    }
+
+   button {
+      background-color:red;
+      border:1px solid #dedede;
+      border-top:1px solid #eee;
+      border-left:1px solid #eee;
+      line-height:130%;
+      text-decoration:none;
+      font-weight:bold;
+      color:white;
+      cursor:pointer;
+      width:150px;
+      overflow:visible;
+      padding:4px 10px 3px 7px;
+   }
+
+   .wkTitle {
+      font-size: 64px;
+      padding-top: 50px;
+      padding-left: 50px;
+      padding-bottom: 50px;
+      width:500px;
+      display:block;
+      float: left;
+   }
+  
+   .buttonContainer {
+      padding-top: 50px;
+      padding-left: 50px;
+      width:150px;
+      display:block;
+      float: left;
+   }
+
+    .titleLine {
+      width: 800px;
+    }
+
+    .mainTimerContainer {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      display:block;
+      width: 500px;
+      float: left;
+      clear: left;
+      font-size: 48px; 
+      background-color: black;
+      text-align: center;
+    }
+
+   .upcomingSegment1 {
+      line-height: 48px;
+   }
+
+   .upcomingSegmentsContainer {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      display:block;
+      width: 500px;
+      float: left;
+      font-size: 24px; 
+      background-color: black;
+    }
+
+   .segmentTitleContainer {
+      padding-top: 30px;
+      padding-left: 50px;
+      padding-bottom: 20px;
+      display:block;
+      width: 500px;
+      float: left;
+      clear: left;
+      font-size: 32px; 
+    }
+
+   .segmentTimerContainer {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      display:block;
+      width: 500px;
+      float: left;
+      clear: left;
+      font-size: 48px; 
+      background-color: black;
+      text-align: center;
+    }
+
+   .segmentTipsTitle {
+      padding-top: 30px;
+      padding-left: 50px;
+      padding-bottom: 20px;
+      display:block;
+      width: 500px;
+      float: left;
+      clear: left;
+      font-size: 32px; 
+    }
+
+    .segmentTipsContainer {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      display:block;
+      width: 500px;
+      float: left;
+      clear: left;
+      font-size: 32px; 
+      background-color: black;
+      text-align: center;
+      line-height: 48px;
+    }
+
+}
+
+</style>
+
+
+
+</head>
+
+
+<body>
+
+   <!--- Grid of UI elements --->
+   <div class = "wrapper">
+
+      <!--- Title and Start Button -->
+      <div class = "box a">
+      
+         <span class = "titleLine">
+            <span id="workoutTitle" class="wkTitle"></span>
+            <span class="buttonContainer"><button type="button">Start / Stop</button></span>
+         </span>
+
+         <span class = "mainTimerContainer">
+            <div id="mainTimer"></div>
+         </span>
+
+         <span class = "segmentTitleContainer">
+            <div id="segmentTitle"></div>
+         </span>
+
+
+         <span class = "segmentTimerContainer">
+            <div id="segmentTimer"></div>
+         </span>
+
+
+         <span class = "segmentTipsTitle">Tips</span>
+
+         <span class = "segmentTipsContainer">
+            <div id="segmentTips" class="segmentTipsContainer"></div>
+         </span>
+
+      </div>
+
+      <div class = "box b">
+
+         <span class = "upcomingSegmentsContainer">
+            Upcoming Segments:
+
+            <div id="upcomingSegment1"></div>
+            <div id="upcomingSegment2"></div>
+            <div id="upcomingSegment3"></div>
+            <div id="upcomingSegment4"></div>
+            <div id="upcomingSegment5"></div>
+         </span>
+
+      </div>
+
+   </div>
+
+</body>
+
+
+<script>
+
+Date.prototype.addMilliseconds = function(ms) {    
+   this.setTime(this.getTime() + ms); 
+   return this;   
+}
+
+Date.prototype.subtractMilliseconds = function(ms) {    
+   this.setTime(this.getTime() - ms); 
+   return this;   
+}
+
+
+function calculateNextSegmentTimes(totalTime, startTime, duration) {
+
+   var x = { };
+
+   x.nextHours1 = Math.floor(((totalTime - startTime) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+   x.nextMinutes1 = Math.floor(((totalTime - startTime) % (1000 * 60 * 60)) / (1000 * 60));
+   x.nextSeconds1 = Math.floor(((totalTime - startTime) % (1000 * 60)) / 1000);
+
+   x.nextHours2 = Math.floor(((totalTime - (startTime + duration)) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+   x.nextMinutes2 = Math.floor(((totalTime - (startTime + duration)) % (1000 * 60 * 60)) / (1000 * 60));
+   x.nextSeconds2 = Math.floor(((totalTime - (startTime + duration)) % (1000 * 60)) / 1000);
+
+   return x;
+}
+
+   function addZeroPadding(pNumber) {
+      if (pNumber < 10) return "0" + pNumber;
+      return pNumber;
+   }
+
+// Segments Data Structures
+var w1s0 = { title: "Get on the bike", duration: 30000, intensity:1, tips: "Get on the bike and get ready to go. " };
+var w1s0a = { title: "Wu TI warm-up1", duration: 300000, intensity:1, tips: "Spend the first 5 minutes of your session in Z1. \n Gradually increase cadence to 90+. " };
+var w1s0b = { title: "Wu TI warm-up2", duration: 300000, intensity:1, tips:"Spend the next 5 minutes progressing through.Z2 \n End at a low Z3." };
+var w1s0c = { title: "Warm Up: Max Spin / Easy Spin", duration: 120000, intensity:1, tips:"Now increase the cadence to your maximum, hold \nfor 5 seconds, followed by 25 seconds easy spin. \nRepeat maximum cadence / easy spin 3 more times." };
+var w1s0d = { title: "Warm Up: Easy Spin", duration: 120000, intensity:1, tips:"Finish with 2 minute easy spin before\nstarting main content of session." };
+var w1s1 = { title: "HRZ 3", duration: 600000, intensity:3, tips:"Maintain a smooth pedal stroke.\nDon't stromp on the pedals when you get tired.\nPace your effort evenly and avoid major \n fluctuations in heart rate." };
+var w1s2 = { title: "Easy Spin", duration: 300000, intensity:1, tips:"Maintain a smooth pedal stroke.\nReduce resistance and keep your legs turning over." };
+var w1s3 = { title: "HRZ 3", duration: 600000, intensity:3, tips:"Maintain a smooth pedal stroke.\nDon't stromp on the pedals when you get tired.\nPace your effort evenly and avoid major \n fluctuations in heart rate." };
+var w1s4 = { title: "Easy Spin", duration: 300000, intensity:1, tips:"Maintain a smooth pedal stroke.\nReduce resistance and keep your legs turning over." };
+var w1s5 = { title: "HRZ 3", duration: 600000, intensity:3, tips:"Maintain a smooth pedal stroke.\nDon't stromp on the pedals when you get tired.\nPace your effort evenly and avoid major \n fluctuations in heart rate." };
+var w1s6 = { title: "Cool Down", duration: 600000, intensity:1, tips:"Maintain a smooth pedal stroke.\nReduce resistance and keep your legs turning over." };
+
+// Workout Data Structure
+var w1 = { title: "Tempo Intervals", description: "Tempo Intervals Description", tips:"S1 Tip 1\nS1 Tip 2\nS1 Tip 3", segments: [w1s0, w1s0a, w1s0b, w1s0c, w1s0d, w1s1, w1s2, w1s3, w1s4, w1s5, w1s6] };
+
+// Initialize main timer based on duration of all segments in workout
+var totalTime = 0;
+
+for (i = 0; i < w1.segments.length; i++) {
+   totalTime += w1.segments[i].duration;
+}
+
+// Set the date we're counting down to
+var countDownDate = new Date().addMilliseconds(totalTime);
+var currentSegment = 0;
+var timeRemainingAfterCurrentSegment = totalTime - w1.segments[0].duration;
+
+// Initial population of next segments list
+var elapsedDuration = 0;
+for (i = 0; i < 5; i++) {
+   
+   elapsedDuration += w1.segments[i].duration;
+   nextTimes = calculateNextSegmentTimes(totalTime, elapsedDuration, w1.segments[i+1].duration);
+
+   nextSegmentWindow = w1.segments[i+1].title;
+   nextSegmentWindow += " ";
+
+   // Window Start Time
+   if (nextTimes.nextHours1 > 0) {
+      nextSegmentWindow += nextTimes.nextHours1;
+      nextSegmentWindow += ":";
+      nextSegmentWindow += addZeroPadding(nextTimes.nextMinutes1);
+   }
+
+   else {
+      nextSegmentWindow += nextTimes.nextMinutes1;
+   }
+
+   nextSegmentWindow += ":";
+   nextSegmentWindow += addZeroPadding(nextTimes.nextSeconds1)
+
+
+   nextSegmentWindow += " - ";
+
+   // Window End Time
+   if (nextTimes.nextHours2 > 0) {
+      nextSegmentWindow += nextTimes.nextHours2;
+      nextSegmentWindow += ":";
+      nextSegmentWindow += addZeroPadding(nextTimes.nextMinutes2);
+   }
+
+   else {
+      nextSegmentWindow += nextTimes.nextMinutes2;
+   }
+
+   nextSegmentWindow += ":";
+   nextSegmentWindow += addZeroPadding(nextTimes.nextSeconds2)
+
+
+
+   document.getElementById("upcomingSegment" + (i+1)).innerHTML = nextSegmentWindow;
+}
+
+
+// Display static title for now
+document.getElementById("workoutTitle").innerHTML = "Tempo Intervals";
+
+// Display static list for upcoming segments for now
+
+document.getElementById("segmentTitle").innerHTML = w1.segments[currentSegment].title;
+document.getElementById("segmentTips").innerHTML = w1.segments[currentSegment].tips;
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get todays date and time
+  var now = new Date().getTime();
+
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+  var distance2 = distance - timeRemainingAfterCurrentSegment;
+
+  // Time calculations for days, hours, minutes and seconds
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  // Time calculations for days, hours, minutes and seconds
+  var minutes2 = Math.floor((distance2 % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds2 = Math.floor((distance2 % (1000 * 60)) / 1000);
+
+   // Display the main timer
+   document.getElementById("mainTimer").innerHTML = hours + "h "
+   + minutes + "m " + seconds + "s ";
+
+   // Display segment timer
+   document.getElementById("segmentTimer").innerHTML = minutes2 + "m " + seconds2 + "s ";
+
+   // When rearching the end of a segment
+   if (distance2 < 0) {
+      
+      currentSegment++;
+
+      // Recalculate time remaining after this segment
+      timeRemainingAfterCurrentSegment = totalTime;
+
+      for (i = 0; i < currentSegment + 1; i++) {
+         timeRemainingAfterCurrentSegment -= w1.segments[i].duration;
+      }
+
+      // Update the labels on the screen
+      document.getElementById("segmentTitle").innerHTML = w1.segments[currentSegment].title;
+      document.getElementById("segmentTips").innerHTML = w1.segments[currentSegment].tips;
+
+      // Update the next segments list
+      segmentsRemaining = w1.segments.length - currentSegment;
+
+      // If there's more than 4 segments remaining, shift the elements up and add on the 5th
+      if (w1.segments.length - currentSegment >= 6) {
+
+         for (i = 0; i < 4; i++) {
+            document.getElementById("upcomingSegment" + (i+1)).innerHTML = document.getElementById("upcomingSegment" + (i+2)).innerHTML;
+         }
+
+         elapsedDuration = 0;
+         for (i = 0; i < currentSegment + 5; i++) {
+            elapsedDuration += w1.segments[i].duration;
+         }
+
+         nextTimes = calculateNextSegmentTimes(totalTime, elapsedDuration, w1.segments[currentSegment + 5].duration);
+
+         document.getElementById("upcomingSegment5").innerHTML = w1.segments[currentSegment + 5].title + "     " + nextTimes.nextHours1 + ":" + nextTimes.nextMinutes1 + ":" + nextTimes.nextSeconds1 + " - " + nextTimes.nextHours2 + ":" + nextTimes.nextMinutes2 + ":" + nextTimes.nextSeconds2;
+      }
+
+      else {  // if there are fewer than 5 segments remaining, blank out the last one and shift up
+
+         for (i = 0; i < 4; i++) {
+            document.getElementById("upcomingSegment" + (i+1)).innerHTML = document.getElementById("upcomingSegment" + (i+2)).innerHTML;
+         }
+
+         document.getElementById("upcomingSegment5").innerHTML = "";
+         
+      }
+   }
+
+   // If the count down is finished, write some text 
+   if (distance < 0) {
+      clearInterval(x);
+      document.getElementById("mainTimer").innerHTML = "Done!";
+      document.getElementById("segmentTimer").innerHTML = "Done!";
+   }
+}, 1000);
+</script>
